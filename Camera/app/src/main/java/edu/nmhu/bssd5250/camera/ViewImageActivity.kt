@@ -1,12 +1,21 @@
 package edu.nmhu.bssd5250.camera
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Typeface
 import android.media.MediaScannerConnection
 import android.net.Uri
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.TextView
+import androidx.annotation.RequiresApi
+import androidx.appcompat.widget.LinearLayoutCompat
+import java.security.cert.CertPath
 
 class ViewImageActivity : AppCompatActivity() {
 
@@ -23,21 +32,76 @@ class ViewImageActivity : AppCompatActivity() {
             //get extra from intent and turn to URI (make sure it is lowercase)
             setImageURI(Uri.parse(intent.getStringExtra("filePath")))
         }
-        setContentView(imagePreview)
+        setContentView(screenLayout)
+    }
+
+    val buttonLayout = LinearLayoutCompat(this).apply {
+        orientation = LinearLayoutCompat.HORIZONTAL
+        layoutParams = LinearLayoutCompat.LayoutParams(
+            LinearLayoutCompat.LayoutParams.MATCH_PARENT,
+            LinearLayoutCompat.LayoutParams.MATCH_PARENT)
+        addView(saveButton)
+        addView(closeButton)
+    }
+
+    val screenLayout = LinearLayoutCompat(this).apply {
+        orientation = LinearLayoutCompat.VERTICAL
+        layoutParams = LinearLayoutCompat.LayoutParams(
+            LinearLayoutCompat.LayoutParams.MATCH_PARENT,
+            LinearLayoutCompat.LayoutParams.MATCH_PARENT)
+        addView(buttonLayout)
+        addView(imagePreview)
     }
 
     val saveButton = Button(this).apply {
-        text = "Save"
+        text = context.getString(R.string.save_button)
         setOnClickListener {
-            MediaScannerConnection.scanFile(applicationContext,
-                                            arrayOf(fileUri.toString()))
+//            MediaScannerConnection.scanFile(applicationContext,
+//                                            arrayOf(fileUri.toString()))
         }
     }
 
     val closeButton =Button(this).apply {
-        text = "Discard"
+        text = context.getString(R.string.discard_button)
         setOnClickListener {
             finish()
         }
+    }
+
+    /*val tv = TextView(this).apply{
+        text = outputString
+        typeface = Typeface.MONOSPACE
+    }*/
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    private fun editBitmap(filePath: String?) {
+        val orig = BitmapFactory.decodeFile(filePath)
+        val bmp = Bitmap.createScaledBitmap(
+            orig, orig.width / 128,
+            orig.height / 128, true
+        )
+        val w = bmp.width
+        val h = bmp.height
+        var outputString = ""
+        for (y in 0..h - 1) { //for all the pixels in the bmp
+            for (x in 0..w - 1) {
+                var currColor: Int = (bmp.getColor(x, y).red() * 255).toInt()
+                currColor += (bmp.getColor(x, y).blue() * 255).toInt()
+                currColor += (bmp.getColor(x, y).green() * 255).toInt()
+                currColor /= 3 //average of r,g,b
+
+                if (currColor < 255 / 4) {
+                    outputString += "-"
+                } else if (currColor < (255 / 4) * 2) {
+                    outputString += "+"
+                } else if (currColor < (255 / 4) * 3) {
+                    outputString += "!"
+                } else {
+                    outputString += "@"
+                }
+            }
+            outputString += "\n"
+        }
+        Log.d("MACT", outputString)
     }
 }

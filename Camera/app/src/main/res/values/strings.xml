@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Camera</string>
+    <string name="save_button">Save</string>
+    <string name="discard_button">Discard</string>
 </resources>
