@@ -35,6 +35,20 @@ class ViewImageActivity : AppCompatActivity() {
             setImageURI(Uri.parse(intent.getStringExtra("filePath")))
         }
 
+        val saveButton =Button(this).apply {
+            text = context.getString(R.string.save_button)
+            setOnClickListener {
+                finish()
+            }
+        }
+
+        val closeButton =Button(this).apply {
+            text = context.getString(R.string.close_button)
+            setOnClickListener {
+                finish()
+            }
+        }
+
         val buttonLayout = LinearLayoutCompat(this).apply {
             orientation = LinearLayoutCompat.HORIZONTAL
             layoutParams = LinearLayoutCompat.LayoutParams(
@@ -55,28 +69,22 @@ class ViewImageActivity : AppCompatActivity() {
 
         setContentView(screenLayout)
     }
-
-    val saveButton = Button(this).apply {
+   /* val saveButton = Button(this).apply {
         text = context.getString(R.string.save_button)
         setOnClickListener {
             MediaScannerConnection.scanFile(applicationContext,
                                             arrayOf(fileUri.toString()))
         }
-    }
+    }*/
 
-    val closeButton =Button(this).apply {
-        text = context.getString(R.string.discard_button)
-        setOnClickListener {
-            finish()
-        }
-    }
 
-    /*val tv = TextView(this).apply{
+
+  /*  val tv = TextView(this).apply{
         text = outputString
         typeface = Typeface.MONOSPACE
     }*/
 
-    @RequiresApi(Build.VERSION_CODES.Q)
+   /* @RequiresApi(Build.VERSION_CODES.Q)
     private fun editBitmap(filePath: String?) {
         val orig = BitmapFactory.decodeFile(filePath)
         val bmp = Bitmap.createScaledBitmap(
@@ -106,5 +114,5 @@ class ViewImageActivity : AppCompatActivity() {
             outputString += "\n"
         }
         Log.d("MACT", outputString)
-    }
+    }*/
 }
